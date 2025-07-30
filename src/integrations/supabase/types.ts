@@ -44,28 +44,43 @@ export type Database = {
       posts: {
         Row: {
           content: string
+          country: string | null
           created_at: string | null
+          excerpt: string | null
+          gallery_images: string[] | null
           id: string
           image_url: string | null
+          location: string | null
           published: boolean | null
+          reading_time: number | null
           slug: string
           title: string
         }
         Insert: {
           content: string
+          country?: string | null
           created_at?: string | null
+          excerpt?: string | null
+          gallery_images?: string[] | null
           id?: string
           image_url?: string | null
+          location?: string | null
           published?: boolean | null
+          reading_time?: number | null
           slug: string
           title: string
         }
         Update: {
           content?: string
+          country?: string | null
           created_at?: string | null
+          excerpt?: string | null
+          gallery_images?: string[] | null
           id?: string
           image_url?: string | null
+          location?: string | null
           published?: boolean | null
+          reading_time?: number | null
           slug?: string
           title?: string
         }

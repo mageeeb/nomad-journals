@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Calendar, Clock, ArrowRight } from 'lucide-react';
+import { Calendar, Clock, ArrowRight, MapPin } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import Navigation from '@/components/Navigation';
 import Footer from '@/components/Footer';
@@ -12,7 +12,12 @@ interface BlogPost {
   title: string;
   slug: string;
   content: string;
+  excerpt: string;
   image_url: string | null;
+  gallery_images: string[] | null;
+  location: string | null;
+  country: string | null;
+  reading_time: number;
   created_at: string;
   published: boolean;
 }
@@ -42,9 +47,10 @@ const Blog = () => {
     }
   };
 
-  const getExcerpt = (content: string, maxLength: number = 150) => {
-    if (content.length <= maxLength) return content;
-    return content.substring(0, maxLength) + '...';
+  const getExcerpt = (post: BlogPost, maxLength: number = 150) => {
+    if (post.excerpt) return post.excerpt;
+    if (post.content.length <= maxLength) return post.content;
+    return post.content.substring(0, maxLength) + '...';
   };
 
   const formatDate = (dateString: string) => {
@@ -110,11 +116,17 @@ const Blog = () => {
                     </div>
                   )}
                   <CardHeader className="space-y-2">
-                    <div className="flex items-center space-x-2 text-sm text-muted-foreground">
-                      <Calendar className="w-4 h-4" />
-                      <span>{formatDate(post.created_at)}</span>
-                      <Clock className="w-4 h-4 ml-2" />
-                      <span>5 min de lecture</span>
+                    <div className="flex items-center justify-between text-sm text-muted-foreground">
+                      <div className="flex items-center space-x-2">
+                        <Calendar className="w-4 h-4" />
+                        <span>{formatDate(post.created_at)}</span>
+                      </div>
+                      {post.location && (
+                        <div className="flex items-center space-x-1">
+                          <MapPin className="w-4 h-4" />
+                          <span>{post.location}{post.country && `, ${post.country}`}</span>
+                        </div>
+                      )}
                     </div>
                     <CardTitle className="text-xl hover:text-primary transition-colors">
                       {post.title}
@@ -122,10 +134,18 @@ const Blog = () => {
                   </CardHeader>
                   <CardContent className="space-y-4">
                     <p className="text-muted-foreground leading-relaxed">
-                      {getExcerpt(post.content)}
+                      {getExcerpt(post)}
                     </p>
                     <div className="flex items-center justify-between">
-                      <Badge variant="secondary">Voyage</Badge>
+                      <div className="flex items-center space-x-3">
+                        <Badge variant="secondary">Voyage</Badge>
+                        {post.reading_time && (
+                          <div className="flex items-center space-x-1 text-sm text-muted-foreground">
+                            <Clock className="w-4 h-4" />
+                            <span>{post.reading_time} min</span>
+                          </div>
+                        )}
+                      </div>
                       <Button variant="ghost" size="sm" className="group">
                         Lire la suite
                         <ArrowRight className="w-4 h-4 ml-1 group-hover:translate-x-1 transition-transform" />
