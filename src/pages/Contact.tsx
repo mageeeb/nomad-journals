@@ -123,7 +123,7 @@ const Contact = () => {
       {/* Hero Section */}
       <section className="relative py-20 bg-gradient-to-r from-primary/10 to-secondary/10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h1 className="text-4xl md:text-6xl font-bold text-foreground mb-6">
+          <h1 className="text-4xl md:text-6xl font-bold text-foreground mb-6 font-playfair">
             Contactez-moi
           </h1>
           <p className="text-xl text-muted-foreground max-w-3xl mx-auto">

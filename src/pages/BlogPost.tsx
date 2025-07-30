@@ -130,7 +130,7 @@ const BlogPostPage = () => {
                   <ArrowLeft className="w-4 h-4" />
                   Retour au blog
                 </Link>
-                <h1 className="text-4xl md:text-6xl font-bold text-white mb-4 leading-tight">
+                <h1 className="text-4xl md:text-6xl font-bold text-white mb-4 leading-tight font-playfair">
                   {post.title}
                 </h1>
                 <div className="flex flex-wrap items-center gap-4 text-white/90">
@@ -161,7 +161,7 @@ const BlogPostPage = () => {
                 <ArrowLeft className="w-4 h-4" />
                 Retour au blog
               </Link>
-              <h1 className="text-4xl md:text-6xl font-bold text-primary-foreground mb-6 leading-tight">
+              <h1 className="text-4xl md:text-6xl font-bold text-primary-foreground mb-6 leading-tight font-playfair">
                 {post.title}
               </h1>
               <div className="flex flex-wrap items-center gap-4 text-primary-foreground/90">
