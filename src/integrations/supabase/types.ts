@@ -14,6 +14,63 @@ export type Database = {
   }
   public: {
     Tables: {
+      contacts: {
+        Row: {
+          accepted_terms: boolean
+          email: string
+          id: string
+          message: string
+          name: string
+          sent_at: string | null
+        }
+        Insert: {
+          accepted_terms: boolean
+          email: string
+          id?: string
+          message: string
+          name: string
+          sent_at?: string | null
+        }
+        Update: {
+          accepted_terms?: boolean
+          email?: string
+          id?: string
+          message?: string
+          name?: string
+          sent_at?: string | null
+        }
+        Relationships: []
+      }
+      posts: {
+        Row: {
+          content: string
+          created_at: string | null
+          id: string
+          image_url: string | null
+          published: boolean | null
+          slug: string
+          title: string
+        }
+        Insert: {
+          content: string
+          created_at?: string | null
+          id?: string
+          image_url?: string | null
+          published?: boolean | null
+          slug: string
+          title: string
+        }
+        Update: {
+          content?: string
+          created_at?: string | null
+          id?: string
+          image_url?: string | null
+          published?: boolean | null
+          slug?: string
+          title?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           created_at: string
