@@ -2,14 +2,27 @@ import React, { createContext, useContext, useEffect, useState } from 'react';
 import { User, Session } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
 
+interface Profile {
+  id: string;
+  user_id: string;
+  username: string | null;
+  full_name: string | null;
+  role: string;
+  avatar_url: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
 interface AuthContextType {
   user: User | null;
   session: Session | null;
+  profile: Profile | null;
   loading: boolean;
   signIn: (email: string, password: string) => Promise<{ error: any }>;
   signUp: (email: string, password: string, metadata?: any) => Promise<{ error: any }>;
   signOut: () => Promise<void>;
   isAdmin: boolean;
+  refreshProfile: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -17,25 +30,35 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [session, setSession] = useState<Session | null>(null);
+  const [profile, setProfile] = useState<Profile | null>(null);
   const [loading, setLoading] = useState(true);
   const [isAdmin, setIsAdmin] = useState(false);
 
-  const checkAdminStatus = async (userId: string) => {
+  const fetchProfile = async (userId: string) => {
     try {
       const { data, error } = await supabase
         .from('profiles')
-        .select('role')
+        .select('*')
         .eq('user_id', userId)
         .maybeSingle();
       
       if (!error && data) {
+        setProfile(data);
         setIsAdmin(data.role === 'admin');
       } else {
+        setProfile(null);
         setIsAdmin(false);
       }
     } catch (error) {
-      console.error('Error checking admin status:', error);
+      console.error('Error fetching profile:', error);
+      setProfile(null);
       setIsAdmin(false);
+    }
+  };
+
+  const refreshProfile = async () => {
+    if (user) {
+      await fetchProfile(user.id);
     }
   };
 
@@ -47,7 +70,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setLoading(false);
       
       if (session?.user) {
-        checkAdminStatus(session.user.id);
+        fetchProfile(session.user.id);
       }
     });
 
@@ -60,9 +83,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
         if (session?.user) {
           setTimeout(() => {
-            checkAdminStatus(session.user.id);
+            fetchProfile(session.user.id);
           }, 0);
         } else {
+          setProfile(null);
           setIsAdmin(false);
         }
       }
@@ -99,11 +123,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const value: AuthContextType = {
     user,
     session,
+    profile,
     loading,
     signIn,
     signUp,
     signOut,
     isAdmin,
+    refreshProfile,
   };
 
   return (

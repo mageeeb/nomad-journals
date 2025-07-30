@@ -7,6 +7,7 @@ import { Calendar, Clock, MapPin, ArrowLeft, Share2 } from 'lucide-react';
 import NavigationNew from '@/components/NavigationNew';
 import Footer from '@/components/Footer';
 import ImageGallery from '@/components/ImageGallery';
+import CommentSection from '@/components/CommentSection';
 
 interface BlogPost {
   id: string;
@@ -246,10 +247,13 @@ const BlogPostPage = () => {
             </div>
           )}
 
+          {/* Section Commentaires */}
+          <CommentSection postId={post.id} />
+
           {/* Navigation vers d'autres articles */}
           <div className="mt-20 pt-12 border-t border-border">
             <div className="text-center">
-              <h3 className="text-2xl font-bold text-foreground mb-6">
+              <h3 className="text-2xl font-bold text-foreground mb-6 font-playfair">
                 Découvrez d'autres aventures
               </h3>
               <Link to="/blog">

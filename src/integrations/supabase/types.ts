@@ -14,6 +14,48 @@ export type Database = {
   }
   public: {
     Tables: {
+      comments: {
+        Row: {
+          content: string
+          created_at: string
+          id: string
+          post_id: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          content: string
+          created_at?: string
+          id?: string
+          post_id: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          content?: string
+          created_at?: string
+          id?: string
+          post_id?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "fk_post"
+            columns: ["post_id"]
+            isOneToOne: false
+            referencedRelation: "posts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fk_user"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["user_id"]
+          },
+        ]
+      }
       contacts: {
         Row: {
           accepted_terms: boolean
@@ -91,6 +133,7 @@ export type Database = {
       }
       profiles: {
         Row: {
+          avatar_url: string | null
           created_at: string
           full_name: string | null
           id: string
@@ -100,6 +143,7 @@ export type Database = {
           username: string | null
         }
         Insert: {
+          avatar_url?: string | null
           created_at?: string
           full_name?: string | null
           id?: string
@@ -109,6 +153,7 @@ export type Database = {
           username?: string | null
         }
         Update: {
+          avatar_url?: string | null
           created_at?: string
           full_name?: string | null
           id?: string
