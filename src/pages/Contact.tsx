@@ -93,8 +93,8 @@ const Contact = () => {
     {
       icon: Mail,
       label: 'Email',
-      value: 'magib.sall@cf2m.be',
-      action: 'mailto:magib.sall@cf2m.be'
+      value: 'nanouchkaly@yahoo.fr',
+      action: 'mailto:nanouchkaly@yahoo.fr'
     },
     {
       icon: Phone,
