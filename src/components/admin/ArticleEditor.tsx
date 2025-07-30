@@ -33,6 +33,7 @@ const articleSchema = z.object({
   published: z.boolean(),
   image_url: z.string().optional(),
   gallery_images: z.array(z.string()).optional(),
+  youtube_videos: z.array(z.string()).optional(),
 });
 
 type ArticleFormData = z.infer<typeof articleSchema>;
@@ -62,6 +63,7 @@ const ArticleEditor: React.FC<ArticleEditorProps> = ({ articleId, onBack, onSave
       published: false,
       image_url: '',
       gallery_images: [],
+      youtube_videos: [],
     },
   });
 
@@ -95,6 +97,7 @@ const ArticleEditor: React.FC<ArticleEditorProps> = ({ articleId, onBack, onSave
         published: data.published,
         image_url: data.image_url || '',
         gallery_images: data.gallery_images || [],
+        youtube_videos: data.youtube_videos || [],
       });
     } catch (error) {
       console.error('Error loading article:', error);
@@ -342,6 +345,58 @@ const ArticleEditor: React.FC<ArticleEditorProps> = ({ articleId, onBack, onSave
                   className="border rounded-lg p-4"
                 />
               </div>
+
+              {/* Vidéos YouTube */}
+              <FormField
+                control={form.control}
+                name="youtube_videos"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Vidéos YouTube du voyage</FormLabel>
+                    <FormControl>
+                      <div className="space-y-3">
+                        {field.value?.map((video, index) => (
+                          <div key={index} className="flex gap-2">
+                            <Input
+                              placeholder="Coller l'iframe YouTube ici..."
+                              value={video}
+                              onChange={(e) => {
+                                const newVideos = [...(field.value || [])];
+                                newVideos[index] = e.target.value;
+                                field.onChange(newVideos);
+                              }}
+                            />
+                            <Button
+                              type="button"
+                              variant="outline"
+                              size="sm"
+                              onClick={() => {
+                                const newVideos = (field.value || []).filter((_, i) => i !== index);
+                                field.onChange(newVideos);
+                              }}
+                            >
+                              Supprimer
+                            </Button>
+                          </div>
+                        ))}
+                        <Button
+                          type="button"
+                          variant="outline"
+                          onClick={() => {
+                            field.onChange([...(field.value || []), '']);
+                          }}
+                        >
+                          Ajouter une vidéo YouTube
+                        </Button>
+                      </div>
+                    </FormControl>
+                    <FormDescription>
+                      Collez les iframes YouTube complets pour intégrer les vidéos dans l'article
+                    </FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
 
               {/* Contenu principal */}
               <FormField
