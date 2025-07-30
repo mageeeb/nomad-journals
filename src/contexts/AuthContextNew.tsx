@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useEffect, useState } from 'react';
+import * as React from 'react';
 import { User, Session } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
 
@@ -12,15 +12,15 @@ interface AuthContextType {
   isAdmin: boolean;
 }
 
-const AuthContext = createContext<AuthContextType | undefined>(undefined);
+const AuthContext = React.createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
-  const [user, setUser] = useState<User | null>(null);
-  const [session, setSession] = useState<Session | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [isAdmin, setIsAdmin] = useState(false);
+  const [user, setUser] = React.useState<User | null>(null);
+  const [session, setSession] = React.useState<Session | null>(null);
+  const [loading, setLoading] = React.useState(true);
+  const [isAdmin, setIsAdmin] = React.useState(false);
 
-  const checkAdminStatus = async (userId: string) => {
+  const checkAdminStatus = React.useCallback(async (userId: string) => {
     try {
       const { data, error } = await supabase
         .from('profiles')
@@ -37,11 +37,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       console.error('Error checking admin status:', error);
       setIsAdmin(false);
     }
-  };
+  }, []);
 
-  useEffect(() => {
+  React.useEffect(() => {
+    console.log('AuthProvider: Initializing...');
+    
     // Get initial session
     supabase.auth.getSession().then(({ data: { session } }) => {
+      console.log('AuthProvider: Initial session loaded', !!session);
       setSession(session);
       setUser(session?.user ?? null);
       setLoading(false);
@@ -54,6 +57,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     // Listen for auth changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       (event, session) => {
+        console.log('AuthProvider: Auth state changed', event, !!session);
         setSession(session);
         setUser(session?.user ?? null);
         setLoading(false);
@@ -68,18 +72,21 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       }
     );
 
-    return () => subscription.unsubscribe();
-  }, []);
+    return () => {
+      console.log('AuthProvider: Cleaning up subscription');
+      subscription.unsubscribe();
+    };
+  }, [checkAdminStatus]);
 
-  const signIn = async (email: string, password: string) => {
+  const signIn = React.useCallback(async (email: string, password: string) => {
     const { error } = await supabase.auth.signInWithPassword({
       email,
       password,
     });
     return { error };
-  };
+  }, []);
 
-  const signUp = async (email: string, password: string, metadata = {}) => {
+  const signUp = React.useCallback(async (email: string, password: string, metadata = {}) => {
     const { error } = await supabase.auth.signUp({
       email,
       password,
@@ -89,14 +96,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       }
     });
     return { error };
-  };
+  }, []);
 
-  const signOut = async () => {
+  const signOut = React.useCallback(async () => {
     await supabase.auth.signOut();
     setIsAdmin(false);
-  };
+  }, []);
 
-  const value: AuthContextType = {
+  const value = React.useMemo<AuthContextType>(() => ({
     user,
     session,
     loading,
@@ -104,7 +111,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     signUp,
     signOut,
     isAdmin,
-  };
+  }), [user, session, loading, signIn, signUp, signOut, isAdmin]);
+
+  console.log('AuthProvider: Rendering with state', { 
+    hasUser: !!user, 
+    loading, 
+    isAdmin 
+  });
 
   return (
     <AuthContext.Provider value={value}>
@@ -114,7 +127,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 }
 
 export const useAuth = () => {
-  const context = useContext(AuthContext);
+  const context = React.useContext(AuthContext);
   if (context === undefined) {
     throw new Error('useAuth must be used within an AuthProvider');
   }
