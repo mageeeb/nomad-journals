@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
@@ -9,6 +9,22 @@ import { MapPin, Camera, Plane, Heart, ArrowRight } from 'lucide-react';
 
 const Index = () => {
   const { user, isAdmin } = useAuth();
+  
+  const cities = [
+    'Genève', 'Dakar', 'Saint-Louis', 'Bretagne', 
+    'Guadeloupe', 'île de Groix', 'Bruxelles', 
+    'Paris', 'Milan', 'etc...'
+  ];
+  
+  const [currentCityIndex, setCurrentCityIndex] = useState(0);
+  
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentCityIndex((prev) => (prev + 1) % cities.length);
+    }, 2000);
+    
+    return () => clearInterval(interval);
+  }, [cities.length]);
 
   const features = [
     {
@@ -43,8 +59,15 @@ const Index = () => {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             <div className="text-center lg:text-left">
               <h1 className="text-4xl md:text-6xl font-bold text-foreground mb-6 font-playfair">
-                Explorez le Monde avec
-                <span className="text-primary block">Moi</span>
+                Explorez le monde à travers des villes comme
+                <span className="text-primary block relative h-20 flex items-center">
+                  <span 
+                    key={currentCityIndex}
+                    className="absolute animate-fade-in font-semibold"
+                  >
+                    "{cities[currentCityIndex]}"
+                  </span>
+                </span>
               </h1>
               <p className="text-xl text-muted-foreground mb-8 leading-relaxed">
                 Bienvenue sur mon blog de voyage ! Découvrez mes aventures à travers 
