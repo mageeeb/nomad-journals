@@ -28,8 +28,8 @@ const Footer = () => {
             <div className="space-y-3">
               <div className="flex items-center space-x-3 text-sm">
                 <Mail className="w-4 h-4 text-primary" />
-                <a href="mailto:magib.sall@cf2m.be" className="text-muted-foreground hover:text-primary transition-colors">
-                  magib.sall@cf2m.be
+                <a href="mailto:nanouchkaly@yahoo.fr" className="text-muted-foreground hover:text-primary transition-colors">
+                  nanouchkaly@yahoo.fr
                 </a>
               </div>
               <div className="flex items-center space-x-3 text-sm">
