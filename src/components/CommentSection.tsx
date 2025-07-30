@@ -7,7 +7,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Link } from 'react-router-dom';
-import { MessageSquare, Send, Pencil, Trash2 } from 'lucide-react';
+import { MessageSquare, Send, Pencil, Trash2, ThumbsUp, Heart } from 'lucide-react';
 import { toast } from 'sonner';
 import { format } from 'date-fns';
 import { fr } from 'date-fns/locale';
@@ -22,6 +22,12 @@ interface Comment {
     username: string;
     full_name: string;
     avatar_url: string;
+  };
+  reactions?: {
+    likes: number;
+    hearts: number;
+    user_liked: boolean;
+    user_hearted: boolean;
   };
 }
 
@@ -45,7 +51,7 @@ const CommentSection: React.FC<CommentSectionProps> = ({ postId }) => {
   const fetchComments = async () => {
     setIsLoading(true);
     try {
-      const { data, error } = await supabase
+      const { data: commentsData, error } = await supabase
         .from('comments')
         .select(`
           *,
@@ -64,7 +70,27 @@ const CommentSection: React.FC<CommentSectionProps> = ({ postId }) => {
         return;
       }
 
-      setComments(data || []);
+      // Fetch reactions for each comment
+      const commentsWithReactions = await Promise.all(
+        (commentsData || []).map(async (comment) => {
+          const { data: reactions } = await supabase
+            .from('comment_reactions')
+            .select('reaction_type, user_id')
+            .eq('comment_id', comment.id);
+
+          const likes = reactions?.filter(r => r.reaction_type === 'like').length || 0;
+          const hearts = reactions?.filter(r => r.reaction_type === 'heart').length || 0;
+          const user_liked = user ? reactions?.some(r => r.reaction_type === 'like' && r.user_id === user.id) || false : false;
+          const user_hearted = user ? reactions?.some(r => r.reaction_type === 'heart' && r.user_id === user.id) || false : false;
+
+          return {
+            ...comment,
+            reactions: { likes, hearts, user_liked, user_hearted }
+          };
+        })
+      );
+
+      setComments(commentsWithReactions);
     } catch (error) {
       console.error('Error:', error);
       toast.error('Erreur lors du chargement des commentaires');
@@ -168,6 +194,46 @@ const CommentSection: React.FC<CommentSectionProps> = ({ postId }) => {
       return username.slice(0, 2).toUpperCase();
     }
     return 'AN';
+  };
+
+  const handleReaction = async (commentId: string, reactionType: 'like' | 'heart') => {
+    if (!user) {
+      toast.error('Connectez-vous pour réagir aux commentaires');
+      return;
+    }
+
+    try {
+      const comment = comments.find(c => c.id === commentId);
+      const isCurrentlyReacted = reactionType === 'like' ? comment?.reactions?.user_liked : comment?.reactions?.user_hearted;
+
+      if (isCurrentlyReacted) {
+        // Remove reaction
+        const { error } = await supabase
+          .from('comment_reactions')
+          .delete()
+          .eq('comment_id', commentId)
+          .eq('user_id', user.id)
+          .eq('reaction_type', reactionType);
+
+        if (error) throw error;
+      } else {
+        // Add reaction
+        const { error } = await supabase
+          .from('comment_reactions')
+          .insert({
+            comment_id: commentId,
+            user_id: user.id,
+            reaction_type: reactionType
+          });
+
+        if (error) throw error;
+      }
+
+      fetchComments(); // Refresh to get updated counts
+    } catch (error) {
+      console.error('Error handling reaction:', error);
+      toast.error('Erreur lors de la réaction');
+    }
   };
 
   return (
@@ -305,8 +371,36 @@ const CommentSection: React.FC<CommentSectionProps> = ({ postId }) => {
                           {comment.content}
                         </p>
                         
+                        {/* Reaction buttons */}
+                        <div className="flex items-center gap-4 pt-2">
+                          <div className="flex items-center gap-2">
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => handleReaction(comment.id, 'like')}
+                              className={`gap-1 text-xs hover:bg-primary/10 ${
+                                comment.reactions?.user_liked ? 'text-primary bg-primary/10' : 'text-muted-foreground'
+                              }`}
+                            >
+                              <ThumbsUp className="w-4 h-4" />
+                              {comment.reactions?.likes || 0}
+                            </Button>
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => handleReaction(comment.id, 'heart')}
+                              className={`gap-1 text-xs hover:bg-red-50 ${
+                                comment.reactions?.user_hearted ? 'text-red-500 bg-red-50' : 'text-muted-foreground'
+                              }`}
+                            >
+                              <Heart className="w-4 h-4" />
+                              {comment.reactions?.hearts || 0}
+                            </Button>
+                          </div>
+                        </div>
+                        
                         {user?.id === comment.user_id && (
-                          <div className="flex gap-2 pt-2">
+                          <div className="flex gap-2 pt-2 border-t border-border/50 mt-3">
                             <Button
                               variant="ghost"
                               size="sm"
