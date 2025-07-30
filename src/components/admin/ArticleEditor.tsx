@@ -133,7 +133,6 @@ const ArticleEditor: React.FC<ArticleEditorProps> = ({ articleId, onBack, onSave
       const articleData = {
         ...data,
         slug: data.slug || generateSlug(data.title),
-        updated_at: new Date().toISOString(),
       };
 
       if (articleId) {
