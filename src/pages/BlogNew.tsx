@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -146,10 +147,12 @@ const BlogPage = () => {
                           </div>
                         )}
                       </div>
-                      <Button variant="ghost" size="sm" className="group">
-                        Lire la suite
-                        <ArrowRight className="w-4 h-4 ml-1 group-hover:translate-x-1 transition-transform" />
-                      </Button>
+                      <Link to={`/blog/${post.slug}`}>
+                        <Button variant="ghost" size="sm" className="group">
+                          Lire la suite
+                          <ArrowRight className="w-4 h-4 ml-1 group-hover:translate-x-1 transition-transform" />
+                        </Button>
+                      </Link>
                     </div>
                   </CardContent>
                 </Card>
