@@ -50,11 +50,26 @@ const Contact = () => {
     setIsSubmitting(true);
     
     try {
-      const { error } = await supabase
+      // Sauvegarder dans la base de données
+      const { error: dbError } = await supabase
         .from('contacts')
         .insert([data]);
 
-      if (error) throw error;
+      if (dbError) throw dbError;
+
+      // Envoyer l'email
+      const { error: emailError } = await supabase.functions.invoke('send-contact-email', {
+        body: {
+          name: data.name,
+          email: data.email,
+          message: data.message,
+        },
+      });
+
+      if (emailError) {
+        console.error('Email sending error:', emailError);
+        // On continue même si l'email échoue, car le message est sauvegardé
+      }
 
       toast({
         title: 'Message envoyé !',
