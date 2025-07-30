@@ -10,6 +10,7 @@ import { Switch } from '@/components/ui/switch';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import ImageUpload from '@/components/ImageUpload';
+import ArticlePreview from '@/components/admin/ArticlePreview';
 import { ArrowLeft, Save, Eye } from 'lucide-react';
 import {
   Form,
@@ -45,6 +46,7 @@ interface ArticleEditorProps {
 const ArticleEditor: React.FC<ArticleEditorProps> = ({ articleId, onBack, onSaved }) => {
   const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [showPreview, setShowPreview] = useState(false);
   const { toast } = useToast();
 
   const form = useForm<ArticleFormData>({
@@ -117,13 +119,17 @@ const ArticleEditor: React.FC<ArticleEditorProps> = ({ articleId, onBack, onSave
   };
 
   const handlePreview = () => {
-    // Pour la prévisualisation, on peut être moins strict sur la validation
+    // Vérifier que les champs obligatoires sont remplis pour un aperçu significatif
     const values = form.getValues();
-    console.log('Aperçu de l\'article:', values);
-    toast({
-      title: 'Prévisualisation',
-      description: 'Fonctionnalité de prévisualisation à implémenter.',
-    });
+    if (!values.title || values.title.length < 3) {
+      toast({
+        variant: 'destructive',
+        title: 'Titre requis',
+        description: 'Veuillez saisir un titre d\'au moins 3 caractères pour prévisualiser l\'article.',
+      });
+      return;
+    }
+    setShowPreview(true);
   };
 
   const onSubmit = async (data: ArticleFormData) => {
@@ -406,6 +412,13 @@ const ArticleEditor: React.FC<ArticleEditorProps> = ({ articleId, onBack, onSave
           </Form>
         </CardContent>
       </Card>
+
+      {/* Prévisualisation */}
+      <ArticlePreview
+        isOpen={showPreview}
+        onClose={() => setShowPreview(false)}
+        articleData={form.getValues()}
+      />
     </div>
   );
 };

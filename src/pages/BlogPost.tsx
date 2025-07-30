@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Calendar, Clock, MapPin, ArrowLeft, Share2 } from 'lucide-react';
 import NavigationNew from '@/components/NavigationNew';
 import Footer from '@/components/Footer';
+import ImageGallery from '@/components/ImageGallery';
 
 interface BlogPost {
   id: string;
@@ -222,17 +223,7 @@ const BlogPostPage = () => {
               <h3 className="text-2xl font-bold text-foreground mb-8 text-center">
                 Galerie du voyage
               </h3>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {post.gallery_images.map((image, index) => (
-                  <div key={index} className="relative group overflow-hidden rounded-lg">
-                    <img 
-                      src={image} 
-                      alt={`Galerie ${index + 1}`}
-                      className="w-full h-64 object-cover transition-transform duration-300 group-hover:scale-105"
-                    />
-                  </div>
-                ))}
-              </div>
+              <ImageGallery images={post.gallery_images} />
             </div>
           )}
 
