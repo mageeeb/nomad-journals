@@ -112,7 +112,18 @@ const ArticleEditor: React.FC<ArticleEditorProps> = ({ articleId, onBack, onSave
       .normalize('NFD')
       .replace(/[\u0300-\u036f]/g, '')
       .replace(/[^a-z0-9]+/g, '-')
-      .replace(/^-+|-+$/g, '');
+      .replace(/^-+|-+$/g, '')
+      .substring(0, 50); // Limiter la longueur
+  };
+
+  const handlePreview = () => {
+    // Pour la prévisualisation, on peut être moins strict sur la validation
+    const values = form.getValues();
+    console.log('Aperçu de l\'article:', values);
+    toast({
+      title: 'Prévisualisation',
+      description: 'Fonctionnalité de prévisualisation à implémenter.',
+    });
   };
 
   const onSubmit = async (data: ArticleFormData) => {
@@ -182,7 +193,7 @@ const ArticleEditor: React.FC<ArticleEditorProps> = ({ articleId, onBack, onSave
           <Button
             type="button"
             variant="outline"
-            onClick={() => form.handleSubmit(onSubmit)()}
+            onClick={handlePreview}
             disabled={saving}
             className="flex items-center gap-2"
           >
@@ -223,12 +234,14 @@ const ArticleEditor: React.FC<ArticleEditorProps> = ({ articleId, onBack, onSave
                         <Input
                           placeholder="Mon voyage extraordinaire à..."
                           {...field}
-                          onChange={(e) => {
-                            field.onChange(e);
-                            if (!form.getValues('slug')) {
-                              form.setValue('slug', generateSlug(e.target.value));
-                            }
-                          }}
+                           onChange={(e) => {
+                             field.onChange(e);
+                             // Générer automatiquement le slug si le titre fait plus de 3 caractères
+                             if (e.target.value.length >= 3 && !form.getValues('slug')) {
+                               const newSlug = generateSlug(e.target.value);
+                               form.setValue('slug', newSlug);
+                             }
+                           }}
                         />
                       </FormControl>
                       <FormMessage />
