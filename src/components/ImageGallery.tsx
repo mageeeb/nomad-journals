@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { ChevronLeft, ChevronRight, X, ZoomIn } from 'lucide-react';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 interface ImageGalleryProps {
   images: string[];
@@ -10,6 +11,10 @@ interface ImageGalleryProps {
 
 const ImageGallery: React.FC<ImageGalleryProps> = ({ images, className = '' }) => {
   const [selectedImageIndex, setSelectedImageIndex] = useState<number | null>(null);
+  const [touchStart, setTouchStart] = useState<number | null>(null);
+  const [touchEnd, setTouchEnd] = useState<number | null>(null);
+  const isMobile = useIsMobile();
+  const imageRef = useRef<HTMLDivElement>(null);
 
   const openLightbox = (index: number) => {
     setSelectedImageIndex(index);
@@ -35,6 +40,32 @@ const ImageGallery: React.FC<ImageGalleryProps> = ({ images, className = '' }) =
     if (e.key === 'ArrowLeft') goToPrevious();
     if (e.key === 'ArrowRight') goToNext();
     if (e.key === 'Escape') closeLightbox();
+  };
+
+  // Gestion des gestes tactiles pour mobile
+  const minSwipeDistance = 50;
+
+  const onTouchStart = (e: React.TouchEvent) => {
+    setTouchEnd(null);
+    setTouchStart(e.targetTouches[0].clientX);
+  };
+
+  const onTouchMove = (e: React.TouchEvent) => {
+    setTouchEnd(e.targetTouches[0].clientX);
+  };
+
+  const onTouchEnd = () => {
+    if (!touchStart || !touchEnd) return;
+    
+    const distance = touchStart - touchEnd;
+    const isLeftSwipe = distance > minSwipeDistance;
+    const isRightSwipe = distance < -minSwipeDistance;
+
+    if (isLeftSwipe) {
+      goToNext();
+    } else if (isRightSwipe) {
+      goToPrevious();
+    }
   };
 
   if (!images || images.length === 0) {
@@ -66,23 +97,29 @@ const ImageGallery: React.FC<ImageGalleryProps> = ({ images, className = '' }) =
       {/* Lightbox Modal */}
       <Dialog open={selectedImageIndex !== null} onOpenChange={closeLightbox}>
         <DialogContent 
-          className="max-w-[95vw] max-h-[95vh] p-0 bg-black/95 border-none"
+          className={`${isMobile ? 'max-w-[100vw] max-h-[100vh] w-screen h-screen rounded-none' : 'max-w-[95vw] max-h-[95vh]'} p-0 bg-black/95 border-none`}
           onKeyDown={handleKeyDown}
         >
           {selectedImageIndex !== null && (
-            <div className="relative w-full h-full flex items-center justify-center">
+            <div 
+              className="relative w-full h-full flex items-center justify-center"
+              onTouchStart={onTouchStart}
+              onTouchMove={onTouchMove}
+              onTouchEnd={onTouchEnd}
+              ref={imageRef}
+            >
               {/* Bouton fermer */}
               <Button
                 variant="ghost"
                 size="icon"
-                className="absolute top-4 right-4 z-10 text-white hover:bg-white/20"
+                className={`absolute ${isMobile ? 'top-2 right-2' : 'top-4 right-4'} z-10 text-white hover:bg-white/20`}
                 onClick={closeLightbox}
               >
-                <X className="w-6 h-6" />
+                <X className={`${isMobile ? 'w-8 h-8' : 'w-6 h-6'}`} />
               </Button>
 
-              {/* Navigation précédente */}
-              {selectedImageIndex > 0 && (
+              {/* Navigation précédente - cachée sur mobile */}
+              {selectedImageIndex > 0 && !isMobile && (
                 <Button
                   variant="ghost"
                   size="icon"
@@ -94,7 +131,7 @@ const ImageGallery: React.FC<ImageGalleryProps> = ({ images, className = '' }) =
               )}
 
               {/* Image principale */}
-              <div className="relative max-w-full max-h-full p-8">
+              <div className={`relative max-w-full max-h-full ${isMobile ? 'p-2' : 'p-8'}`}>
                 <img
                   src={images[selectedImageIndex]}
                   alt={`Galerie ${selectedImageIndex + 1}`}
@@ -102,8 +139,8 @@ const ImageGallery: React.FC<ImageGalleryProps> = ({ images, className = '' }) =
                 />
               </div>
 
-              {/* Navigation suivante */}
-              {selectedImageIndex < images.length - 1 && (
+              {/* Navigation suivante - cachée sur mobile */}
+              {selectedImageIndex < images.length - 1 && !isMobile && (
                 <Button
                   variant="ghost"
                   size="icon"
@@ -115,32 +152,43 @@ const ImageGallery: React.FC<ImageGalleryProps> = ({ images, className = '' }) =
               )}
 
               {/* Indicateur de position */}
-              <div className="absolute bottom-4 left-1/2 -translate-x-1/2 z-10">
+              <div className={`absolute ${isMobile ? 'top-14' : 'bottom-4'} left-1/2 -translate-x-1/2 z-10`}>
                 <div className="bg-black/50 rounded-full px-4 py-2 text-white text-sm">
                   {selectedImageIndex + 1} / {images.length}
                 </div>
               </div>
 
-              {/* Miniatures */}
-              <div className="absolute bottom-16 left-1/2 -translate-x-1/2 z-10 flex gap-2 max-w-[80vw] overflow-x-auto pb-2">
-                {images.map((image, index) => (
-                  <button
-                    key={index}
-                    onClick={() => setSelectedImageIndex(index)}
-                    className={`relative w-16 h-16 rounded overflow-hidden flex-shrink-0 transition-all duration-200 ${
-                      index === selectedImageIndex 
-                        ? 'ring-2 ring-white scale-110' 
-                        : 'opacity-70 hover:opacity-100'
-                    }`}
-                  >
-                    <img
-                      src={image}
-                      alt={`Miniature ${index + 1}`}
-                      className="w-full h-full object-cover"
-                    />
-                  </button>
-                ))}
-              </div>
+              {/* Miniatures - cachées sur mobile */}
+              {!isMobile && (
+                <div className="absolute bottom-16 left-1/2 -translate-x-1/2 z-10 flex gap-2 max-w-[80vw] overflow-x-auto pb-2">
+                  {images.map((image, index) => (
+                    <button
+                      key={index}
+                      onClick={() => setSelectedImageIndex(index)}
+                      className={`relative w-16 h-16 rounded overflow-hidden flex-shrink-0 transition-all duration-200 ${
+                        index === selectedImageIndex 
+                          ? 'ring-2 ring-white scale-110' 
+                          : 'opacity-70 hover:opacity-100'
+                      }`}
+                    >
+                      <img
+                        src={image}
+                        alt={`Miniature ${index + 1}`}
+                        className="w-full h-full object-cover"
+                      />
+                    </button>
+                  ))}
+                </div>
+              )}
+
+              {/* Instructions de swipe sur mobile */}
+              {isMobile && images.length > 1 && (
+                <div className="absolute bottom-4 left-1/2 -translate-x-1/2 z-10">
+                  <div className="bg-black/50 rounded-full px-4 py-2 text-white text-xs">
+                    Glissez pour naviguer
+                  </div>
+                </div>
+              )}
             </div>
           )}
         </DialogContent>
