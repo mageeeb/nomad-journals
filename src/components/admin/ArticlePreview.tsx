@@ -16,6 +16,7 @@ interface ArticleData {
   published: boolean;
   image_url?: string;
   gallery_images?: string[];
+  youtube_videos?: string[];
 }
 
 interface ArticlePreviewProps {
@@ -187,6 +188,24 @@ const ArticlePreview: React.FC<ArticlePreviewProps> = ({ isOpen, onClose, articl
                     Galerie du voyage
                   </h3>
                   <ImageGallery images={articleData.gallery_images} />
+                </div>
+              )}
+
+              {/* Vidéos YouTube */}
+              {articleData.youtube_videos && articleData.youtube_videos.length > 0 && (
+                <div className="mt-16">
+                  <h3 className="text-2xl font-bold text-foreground mb-8 text-center">
+                    Vidéos du voyage
+                  </h3>
+                  <div className="grid gap-8">
+                    {articleData.youtube_videos.map((video, index) => (
+                      <div 
+                        key={index}
+                        className="aspect-video rounded-lg overflow-hidden shadow-lg bg-muted"
+                        dangerouslySetInnerHTML={{ __html: video }}
+                      />
+                    ))}
+                  </div>
                 </div>
               )}
 

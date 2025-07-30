@@ -55,6 +55,7 @@ export type Database = {
           reading_time: number | null
           slug: string
           title: string
+          youtube_videos: string[] | null
         }
         Insert: {
           content: string
@@ -69,6 +70,7 @@ export type Database = {
           reading_time?: number | null
           slug: string
           title: string
+          youtube_videos?: string[] | null
         }
         Update: {
           content?: string
@@ -83,6 +85,7 @@ export type Database = {
           reading_time?: number | null
           slug?: string
           title?: string
+          youtube_videos?: string[] | null
         }
         Relationships: []
       }

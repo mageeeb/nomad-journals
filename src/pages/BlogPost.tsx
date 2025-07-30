@@ -16,6 +16,7 @@ interface BlogPost {
   excerpt: string;
   image_url: string | null;
   gallery_images: string[] | null;
+  youtube_videos: string[] | null;
   location: string | null;
   country: string | null;
   reading_time: number;
@@ -224,6 +225,24 @@ const BlogPostPage = () => {
                 Galerie du voyage
               </h3>
               <ImageGallery images={post.gallery_images} />
+            </div>
+          )}
+
+          {/* Vidéos YouTube */}
+          {post.youtube_videos && post.youtube_videos.length > 0 && (
+            <div className="mt-16">
+              <h3 className="text-2xl font-bold text-foreground mb-8 text-center">
+                Vidéos du voyage
+              </h3>
+              <div className="grid gap-8">
+                {post.youtube_videos.map((video, index) => (
+                  <div 
+                    key={index}
+                    className="aspect-video rounded-lg overflow-hidden shadow-lg bg-muted"
+                    dangerouslySetInnerHTML={{ __html: video }}
+                  />
+                ))}
+              </div>
             </div>
           )}
 
