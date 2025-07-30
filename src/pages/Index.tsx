@@ -59,7 +59,7 @@ const Index = () => {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             <div className="text-center lg:text-left">
               <h1 className="text-4xl md:text-6xl font-bold text-foreground mb-6 font-playfair">
-                Explorez le monde à travers des villes comme
+                Explorez le monde à travers des villes
                 <span className="text-primary block relative h-20 flex items-center">
                   <span 
                     key={currentCityIndex}
