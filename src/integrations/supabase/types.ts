@@ -161,8 +161,54 @@ export type Database = {
         }
         Relationships: []
       }
+      itinerary_steps: {
+        Row: {
+          activities: Json | null
+          budget: number | null
+          created_at: string
+          day_number: number
+          description: string | null
+          id: string
+          images: string[] | null
+          location: string | null
+          post_id: string
+          tips: string | null
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          activities?: Json | null
+          budget?: number | null
+          created_at?: string
+          day_number: number
+          description?: string | null
+          id?: string
+          images?: string[] | null
+          location?: string | null
+          post_id: string
+          tips?: string | null
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          activities?: Json | null
+          budget?: number | null
+          created_at?: string
+          day_number?: number
+          description?: string | null
+          id?: string
+          images?: string[] | null
+          location?: string | null
+          post_id?: string
+          tips?: string | null
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       posts: {
         Row: {
+          budget_info: Json | null
           content: string
           country: string | null
           created_at: string | null
@@ -170,14 +216,18 @@ export type Database = {
           gallery_images: string[] | null
           id: string
           image_url: string | null
+          itinerary_days: Json | null
           location: string | null
+          practical_info: Json | null
           published: boolean | null
           reading_time: number | null
           slug: string
           title: string
+          transport_info: Json | null
           youtube_videos: string[] | null
         }
         Insert: {
+          budget_info?: Json | null
           content: string
           country?: string | null
           created_at?: string | null
@@ -185,14 +235,18 @@ export type Database = {
           gallery_images?: string[] | null
           id?: string
           image_url?: string | null
+          itinerary_days?: Json | null
           location?: string | null
+          practical_info?: Json | null
           published?: boolean | null
           reading_time?: number | null
           slug: string
           title: string
+          transport_info?: Json | null
           youtube_videos?: string[] | null
         }
         Update: {
+          budget_info?: Json | null
           content?: string
           country?: string | null
           created_at?: string | null
@@ -200,11 +254,14 @@ export type Database = {
           gallery_images?: string[] | null
           id?: string
           image_url?: string | null
+          itinerary_days?: Json | null
           location?: string | null
+          practical_info?: Json | null
           published?: boolean | null
           reading_time?: number | null
           slug?: string
           title?: string
+          transport_info?: Json | null
           youtube_videos?: string[] | null
         }
         Relationships: []

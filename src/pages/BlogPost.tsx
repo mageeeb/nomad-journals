@@ -37,6 +37,16 @@ const BlogPostPage = () => {
     }
   }, [slug]);
 
+  const checkIfItinerary = async (postId: string) => {
+    const { data } = await supabase
+      .from('itinerary_steps')
+      .select('id')
+      .eq('post_id', postId)
+      .limit(1);
+    
+    return data && data.length > 0;
+  };
+
   const fetchPost = async (postSlug: string) => {
     try {
       const { data, error } = await supabase
@@ -50,9 +60,18 @@ const BlogPostPage = () => {
       
       if (!data) {
         setError('Article introuvable');
-      } else {
-        setPost(data);
+        return;
       }
+
+      // Vérifier si c'est un itinéraire
+      const hasItinerary = await checkIfItinerary(data.id);
+      if (hasItinerary) {
+        // Rediriger vers la page d'itinéraire
+        window.location.href = `/blog/itinerary/${postSlug}`;
+        return;
+      }
+
+      setPost(data);
     } catch (error) {
       console.error('Error fetching post:', error);
       setError('Erreur lors du chargement de l\'article');

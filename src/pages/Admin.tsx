@@ -5,6 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { supabase } from '@/integrations/supabase/client';
 import ArticleEditor from '@/components/admin/ArticleEditor';
+import { ItineraryEditor } from '@/components/admin/ItineraryEditor';
 import Navigation from '@/components/Navigation';
 import Footer from '@/components/Footer';
 import { 
@@ -53,7 +54,7 @@ interface Contact {
   sent_at: string;
 }
 
-type AdminView = 'dashboard' | 'articles' | 'new-article' | 'edit-article' | 'contacts';
+type AdminView = 'dashboard' | 'articles' | 'new-article' | 'edit-article' | 'edit-itinerary' | 'contacts';
 
 const Admin = () => {
   const { user, signOut } = useAuth();
@@ -63,6 +64,7 @@ const Admin = () => {
   const [contacts, setContacts] = useState<Contact[]>([]);
   const [loading, setLoading] = useState(false);
   const [editingArticleId, setEditingArticleId] = useState<string | null>(null);
+  const [editingItineraryId, setEditingItineraryId] = useState<string | null>(null);
   const [stats, setStats] = useState({
     totalPosts: 0,
     publishedPosts: 0,
@@ -274,6 +276,17 @@ const Admin = () => {
                     <Edit className="w-4 h-4" />
                   </Button>
                   
+                  <Button
+                    variant="secondary"
+                    size="sm"
+                    onClick={() => {
+                      setEditingItineraryId(post.id);
+                      setCurrentView('edit-itinerary');
+                    }}
+                  >
+                    Itinéraire
+                  </Button>
+                  
                   <AlertDialog>
                     <AlertDialogTrigger asChild>
                       <Button variant="outline" size="sm">
@@ -361,6 +374,29 @@ const Admin = () => {
               loadData();
               setCurrentView('articles');
               setEditingArticleId(null);
+            }}
+          />
+        </div>
+        <Footer />
+      </div>
+    );
+  }
+
+  if (currentView === 'edit-itinerary' && editingItineraryId) {
+    return (
+      <div className="min-h-screen bg-background">
+        <Navigation />
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+          <ItineraryEditor 
+            postId={editingItineraryId}
+            onBack={() => {
+              setCurrentView('articles');
+              setEditingItineraryId(null);
+            }}
+            onSaved={() => {
+              loadData();
+              setCurrentView('articles');
+              setEditingItineraryId(null);
             }}
           />
         </div>

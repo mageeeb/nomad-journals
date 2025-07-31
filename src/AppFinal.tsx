@@ -9,6 +9,7 @@ import { ProtectedRoute } from "./components/ProtectedRoute";
 import Index from "./pages/Index";
 import Blog from "./pages/BlogNew";
 import BlogPost from "./pages/BlogPost";
+import BlogPostItinerary from "./pages/BlogPostItinerary";
 import About from "./pages/About";
 import Contact from "./pages/Contact";
 import Auth from "./pages/Auth";
@@ -28,6 +29,7 @@ const App: React.FC = () => {
             <Routes>
               <Route path="/" element={<Index />} />
               <Route path="/blog" element={<Blog />} />
+              <Route path="/blog/itinerary/:slug" element={<BlogPostItinerary />} />
               <Route path="/blog/:slug" element={<BlogPost />} />
               <Route path="/about" element={<About />} />
               <Route path="/contact" element={<Contact />} />
