@@ -321,7 +321,10 @@ const BlogPostItinerary: React.FC = () => {
                     <Lightbulb className="w-4 h-4" />
                     Conseils pratiques
                   </h4>
-                  <p className="text-sm">{step.tips}</p>
+                  <div 
+                    className="text-sm prose prose-sm max-w-none"
+                    dangerouslySetInnerHTML={{ __html: `<p>${formatContent(step.tips)}</p>` }}
+                  />
                 </div>
               )}
 
