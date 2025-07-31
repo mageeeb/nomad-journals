@@ -6,6 +6,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Plus, Trash2, Save, ArrowLeft } from "lucide-react";
 import ImageUpload from "@/components/ImageUpload";
+import RichTextEditor from "@/components/RichTextEditor";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/components/ui/use-toast";
 
@@ -308,13 +309,12 @@ export const ItineraryEditor: React.FC<ItineraryEditorProps> = ({ postId, onBack
                 </div>
 
                 <div>
-                  <Label htmlFor={`tips-${stepIndex}`}>Conseils</Label>
-                  <Textarea
+                  <RichTextEditor
                     id={`tips-${stepIndex}`}
                     value={step.tips}
-                    onChange={(e) => updateStep(stepIndex, 'tips', e.target.value)}
+                    onChange={(value) => updateStep(stepIndex, 'tips', value)}
                     placeholder="Conseils pratiques pour cette journée"
-                    rows={2}
+                    label="Conseils"
                   />
                 </div>
 
@@ -360,35 +360,32 @@ export const ItineraryEditor: React.FC<ItineraryEditorProps> = ({ postId, onBack
         </CardHeader>
         <CardContent className="space-y-4">
           <div>
-            <Label htmlFor="practical-info">Conseils pratiques</Label>
-            <Textarea
+            <RichTextEditor
               id="practical-info"
               value={practicalInfo}
-              onChange={(e) => setPracticalInfo(e.target.value)}
+              onChange={setPracticalInfo}
               placeholder="Conseils généraux, que emporter, meilleures périodes, etc."
-              rows={4}
+              label="Conseils pratiques"
             />
           </div>
 
           <div>
-            <Label htmlFor="budget-info">Informations budget</Label>
-            <Textarea
+            <RichTextEditor
               id="budget-info"
               value={budgetInfo}
-              onChange={(e) => setBudgetInfo(e.target.value)}
+              onChange={setBudgetInfo}
               placeholder="Budget total, répartition des coûts, conseils d'économie, etc."
-              rows={4}
+              label="Informations budget"
             />
           </div>
 
           <div>
-            <Label htmlFor="transport-info">Informations transport</Label>
-            <Textarea
+            <RichTextEditor
               id="transport-info"
               value={transportInfo}
-              onChange={(e) => setTransportInfo(e.target.value)}
+              onChange={setTransportInfo}
               placeholder="Comment se déplacer, location de voiture, transports en commun, etc."
-              rows={4}
+              label="Informations transport"
             />
           </div>
         </CardContent>

@@ -323,7 +323,7 @@ const BlogPostItinerary: React.FC = () => {
                   </h4>
                   <div 
                     className="text-sm prose prose-sm max-w-none"
-                    dangerouslySetInnerHTML={{ __html: `<p>${formatContent(step.tips)}</p>` }}
+                    dangerouslySetInnerHTML={{ __html: step.tips }}
                   />
                 </div>
               )}
@@ -367,7 +367,7 @@ const BlogPostItinerary: React.FC = () => {
                   <CardContent>
                     <div 
                       className="prose prose-sm"
-                      dangerouslySetInnerHTML={{ __html: formatContent(post.practical_info) }}
+                      dangerouslySetInnerHTML={{ __html: post.practical_info }}
                     />
                   </CardContent>
                 </Card>
@@ -384,7 +384,7 @@ const BlogPostItinerary: React.FC = () => {
                   <CardContent>
                     <div 
                       className="prose prose-sm"
-                      dangerouslySetInnerHTML={{ __html: formatContent(post.budget_info) }}
+                      dangerouslySetInnerHTML={{ __html: post.budget_info }}
                     />
                   </CardContent>
                 </Card>
@@ -401,7 +401,7 @@ const BlogPostItinerary: React.FC = () => {
                   <CardContent>
                     <div 
                       className="prose prose-sm"
-                      dangerouslySetInnerHTML={{ __html: formatContent(post.transport_info) }}
+                      dangerouslySetInnerHTML={{ __html: post.transport_info }}
                     />
                   </CardContent>
                 </Card>
