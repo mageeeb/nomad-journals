@@ -60,7 +60,7 @@ const Index = () => {
             <div className="text-center lg:text-left">
               <h1 className="text-4xl md:text-6xl font-bold text-foreground mb-6 font-playfair">
                 Explorez le monde à travers des villes
-                <span className="text-primary block relative h-20 flex items-center">
+                <span className="text-primary block relative h-20 flex items-center justify-center lg:justify-start">
                   <span 
                     key={currentCityIndex}
                     className="absolute animate-fade-in font-semibold"

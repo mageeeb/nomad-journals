@@ -1,0 +1,21 @@
+{
+  "name": "Nomad Journals",
+  "short_name": "Nomad",
+  "start_url": "/",
+  "display": "standalone",
+  "theme_color": "#0ea5e9",
+  "background_color": "#0b0f1a",
+  "description": "Blog de voyage PWA avec navigation type app.",
+  "icons": [
+    {
+      "src": "/lovable-uploads/15ff9a6d-5fc2-41cc-82c6-046da107e6ef.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/lovable-uploads/15ff9a6d-5fc2-41cc-82c6-046da107e6ef.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
