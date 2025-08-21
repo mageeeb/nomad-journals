@@ -319,28 +319,51 @@ export const ItineraryEditor: React.FC<ItineraryEditorProps> = ({ postId, onBack
                 </div>
 
                 <div>
-                  <Label>Images de l'étape</Label>
-                  {step.images.map((imageUrl, imageIndex) => (
-                    <div key={imageIndex} className="flex items-center gap-2 mt-2">
-                      <img src={imageUrl} alt="" className="w-20 h-20 object-cover rounded" />
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => {
-                          const newImages = step.images.filter((_, i) => i !== imageIndex);
-                          updateStep(stepIndex, 'images', newImages);
+                  <Label>Galerie photos (max 3 photos)</Label>
+                  <div className="space-y-4">
+                    {step.images.length > 0 && (
+                      <div className="grid grid-cols-3 gap-4">
+                        {step.images.map((imageUrl, imageIndex) => (
+                          <div key={imageIndex} className="relative group">
+                            <img 
+                              src={imageUrl} 
+                              alt={`Photo ${imageIndex + 1}`} 
+                              className="w-full h-24 object-cover rounded-lg border" 
+                            />
+                            <Button
+                              variant="destructive"
+                              size="sm"
+                              className="absolute -top-2 -right-2 h-6 w-6 rounded-full p-0 opacity-0 group-hover:opacity-100 transition-opacity"
+                              onClick={() => {
+                                const newImages = step.images.filter((_, i) => i !== imageIndex);
+                                updateStep(stepIndex, 'images', newImages);
+                              }}
+                            >
+                              <Trash2 className="h-3 w-3" />
+                            </Button>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                    
+                    {step.images.length < 3 && (
+                      <ImageUpload
+                        onImageUploaded={(url) => {
+                          if (step.images.length < 3) {
+                            const newImages = [...step.images, url];
+                            updateStep(stepIndex, 'images', newImages);
+                          }
                         }}
-                      >
-                        <Trash2 className="h-4 w-4" />
-                      </Button>
-                    </div>
-                  ))}
-                  <ImageUpload
-                    onImageUploaded={(url) => {
-                      const newImages = [...step.images, url];
-                      updateStep(stepIndex, 'images', newImages);
-                    }}
-                  />
+                        folder={`itinerary/${postId}/day-${step.day_number}`}
+                        preview={false}
+                        className="border-2 border-dashed border-gray-300 rounded-lg p-4"
+                      />
+                    )}
+                    
+                    <p className="text-sm text-muted-foreground">
+                      {step.images.length}/3 photos ajoutées
+                    </p>
+                  </div>
                 </div>
               </CardContent>
             </Card>

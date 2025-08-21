@@ -304,13 +304,51 @@ const BlogPostItinerary: React.FC = () => {
               )}
 
               {/* Images de l'étape */}
-              {step.images.length > 0 && (
-                <div>
-                  <h4 className="font-semibold mb-3 flex items-center gap-2">
+              {step.images && step.images.length > 0 && (
+                <div className="my-6">
+                  <h4 className="font-semibold mb-4 flex items-center gap-2 text-gray-800">
                     <Camera className="w-4 h-4" />
                     Photos du jour
                   </h4>
-                  <ImageGallery images={step.images} />
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    {step.images.map((image, imageIndex) => (
+                      <div 
+                        key={imageIndex}
+                        className="relative group cursor-pointer overflow-hidden rounded-lg shadow-md hover:shadow-lg transition-all duration-300 transform hover:scale-105"
+                        onClick={() => {
+                          // Créer une lightbox avec navigation
+                          const lightbox = document.createElement('div');
+                          lightbox.className = 'fixed inset-0 bg-black bg-opacity-95 flex items-center justify-center z-50';
+                          lightbox.innerHTML = `
+                            <div class="relative max-w-full max-h-full flex items-center justify-center">
+                              <img src="${image}" alt="Photo ${imageIndex + 1} - Jour ${step.day_number}" class="max-w-full max-h-full object-contain">
+                              <button class="absolute top-4 right-4 text-white text-3xl hover:text-gray-300 bg-black bg-opacity-50 rounded-full w-10 h-10 flex items-center justify-center">&times;</button>
+                              ${imageIndex > 0 ? `<button class="absolute left-4 top-1/2 transform -translate-y-1/2 text-white text-2xl hover:text-gray-300 bg-black bg-opacity-50 rounded-full w-12 h-12 flex items-center justify-center">‹</button>` : ''}
+                              ${imageIndex < step.images.length - 1 ? `<button class="absolute right-4 top-1/2 transform -translate-y-1/2 text-white text-2xl hover:text-gray-300 bg-black bg-opacity-50 rounded-full w-12 h-12 flex items-center justify-center">›</button>` : ''}
+                              <div class="absolute bottom-4 left-1/2 transform -translate-x-1/2 text-white text-sm bg-black bg-opacity-50 px-3 py-1 rounded">${imageIndex + 1} / ${step.images.length}</div>
+                            </div>
+                          `;
+                          lightbox.onclick = (e) => {
+                            if (e.target === lightbox || (e.target as Element).textContent === '×') {
+                              document.body.removeChild(lightbox);
+                            }
+                          };
+                          document.body.appendChild(lightbox);
+                        }}
+                      >
+                        <img 
+                          src={image} 
+                          alt={`Photo ${imageIndex + 1} - Jour ${step.day_number}`}
+                          className="w-full h-48 object-cover"
+                        />
+                        <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-20 transition-all duration-300 flex items-center justify-center">
+                          <div className="text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-black bg-opacity-50 px-3 py-1 rounded text-sm">
+                            Cliquer pour agrandir
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
                 </div>
               )}
 
