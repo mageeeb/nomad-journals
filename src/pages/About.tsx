@@ -31,7 +31,7 @@ const About = () => {
             </div>
             <div className="flex justify-center lg:justify-end">
               <img 
-                src="/lovable-uploads/0eb5cb7e-cfca-434a-b11c-1b1fdeaaacb3.png" 
+                src="/favicon.ico?v=3" 
                 alt="Magib Sall" 
                 className="w-80 h-80 rounded-full border-4 border-primary shadow-2xl"
               />

@@ -58,6 +58,7 @@ const Carousel = React.forwardRef<
   ) => {
     const [carouselRef, api] = useEmblaCarousel(
       {
+        loop: opts?.loop ?? true,
         ...opts,
         axis: orientation === "horizontal" ? "x" : "y",
       },
@@ -69,6 +70,18 @@ const Carousel = React.forwardRef<
     const onSelect = React.useCallback((api: CarouselApi) => {
       if (!api) {
         return
+      }
+
+      try {
+        const snaps = api.scrollSnapList()
+        const selected = api.selectedScrollSnap()
+        const canPrev = api.canScrollPrev()
+        const canNext = api.canScrollNext()
+        // Runtime debug instrumentation
+        // eslint-disable-next-line no-console
+        console.log("[Embla] select/reInit", { canPrev, canNext, snaps, selected })
+      } catch (e) {
+        // ignore
       }
 
       setCanScrollPrev(api.canScrollPrev())
@@ -109,14 +122,76 @@ const Carousel = React.forwardRef<
         return
       }
 
+      try {
+        const snaps = api.scrollSnapList()
+        const selected = api.selectedScrollSnap()
+        const canPrev = api.canScrollPrev()
+        const canNext = api.canScrollNext()
+        // eslint-disable-next-line no-console
+        console.log("[Embla] init", { canPrev, canNext, snaps, selected })
+      } catch (e) {
+        // ignore
+      }
+
       onSelect(api)
       api.on("reInit", onSelect)
       api.on("select", onSelect)
 
       return () => {
         api?.off("select", onSelect)
+        api?.off("reInit", onSelect)
       }
     }, [api, onSelect])
+
+    // Force reInit when images inside the carousel load (incl. lazy-loaded)
+    React.useEffect(() => {
+      if (!api || !carouselRef?.current) return
+
+      const viewport = carouselRef.current as HTMLDivElement
+      const images = Array.from(viewport.querySelectorAll('img')) as HTMLImageElement[]
+      if (images.length === 0) return
+
+      let timeout: number | undefined
+      const reinit = () => {
+        if (timeout) window.clearTimeout(timeout)
+        timeout = window.setTimeout(() => {
+          api.reInit()
+        }, 50)
+      }
+
+      images.forEach((img) => {
+        if (img.complete) {
+          reinit()
+        } else {
+          img.addEventListener('load', reinit, { once: true })
+          img.addEventListener('error', reinit, { once: true })
+        }
+      })
+
+      return () => {
+        if (timeout) window.clearTimeout(timeout)
+        // Listeners were attached with { once: true }, no manual removal needed
+      }
+    }, [api, carouselRef, children])
+
+    // Reinitialize Embla on resize/viewport changes
+    React.useEffect(() => {
+      if (!api || !carouselRef?.current) return
+
+      const viewport = carouselRef.current as HTMLDivElement
+      const ro = new ResizeObserver(() => {
+        api.reInit()
+      })
+      ro.observe(viewport)
+
+      const onWinResize = () => api.reInit()
+      window.addEventListener('resize', onWinResize)
+
+      return () => {
+        ro.disconnect()
+        window.removeEventListener('resize', onWinResize)
+      }
+    }, [api, carouselRef])
 
     return (
       <CarouselContext.Provider
@@ -150,12 +225,12 @@ Carousel.displayName = "Carousel"
 
 const CarouselContent = React.forwardRef<
   HTMLDivElement,
-  React.HTMLAttributes<HTMLDivElement>
->(({ className, ...props }, ref) => {
+  React.HTMLAttributes<HTMLDivElement> & { viewportClassName?: string }
+>(({ className, viewportClassName, ...props }, ref) => {
   const { carouselRef, orientation } = useCarousel()
 
   return (
-    <div ref={carouselRef} className="overflow-hidden">
+    <div ref={carouselRef} className={cn("overflow-hidden touch-pan-y", viewportClassName)}>
       <div
         ref={ref}
         className={cn(
@@ -204,10 +279,10 @@ const CarouselPrevious = React.forwardRef<
       variant={variant}
       size={size}
       className={cn(
-        "absolute  h-8 w-8 rounded-full",
+        "absolute z-50 h-8 w-8 rounded-full pointer-events-auto",
         orientation === "horizontal"
-          ? "-left-12 top-1/2 -translate-y-1/2"
-          : "-top-12 left-1/2 -translate-x-1/2 rotate-90",
+          ? "left-2 top-1/2 -translate-y-1/2"
+          : "top-2 left-1/2 -translate-x-1/2 rotate-90",
         className
       )}
       disabled={!canScrollPrev}
@@ -233,10 +308,10 @@ const CarouselNext = React.forwardRef<
       variant={variant}
       size={size}
       className={cn(
-        "absolute h-8 w-8 rounded-full",
+        "absolute z-50 h-8 w-8 rounded-full pointer-events-auto",
         orientation === "horizontal"
-          ? "-right-12 top-1/2 -translate-y-1/2"
-          : "-bottom-12 left-1/2 -translate-x-1/2 rotate-90",
+          ? "right-2 top-1/2 -translate-y-1/2"
+          : "bottom-2 left-1/2 -translate-x-1/2 rotate-90",
         className
       )}
       disabled={!canScrollNext}

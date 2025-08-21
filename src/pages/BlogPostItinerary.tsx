@@ -7,6 +7,7 @@ import NavigationNew from "@/components/NavigationNew";
 import Footer from "@/components/Footer";
 import CommentSection from "@/components/CommentSection";
 import ImageGallery from "@/components/ImageGallery";
+import { Carousel, CarouselContent, CarouselItem, CarouselPrevious, CarouselNext } from "@/components/ui/carousel";
 import { supabase } from "@/integrations/supabase/client";
 import { 
   MapPin, 
@@ -310,44 +311,32 @@ const BlogPostItinerary: React.FC = () => {
                     <Camera className="w-4 h-4" />
                     Photos du jour
                   </h4>
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    {step.images.map((image, imageIndex) => (
-                      <div 
-                        key={imageIndex}
-                        className="relative group cursor-pointer overflow-hidden rounded-lg shadow-md hover:shadow-lg transition-all duration-300 transform hover:scale-105"
-                        onClick={() => {
-                          // Créer une lightbox avec navigation
-                          const lightbox = document.createElement('div');
-                          lightbox.className = 'fixed inset-0 bg-black bg-opacity-95 flex items-center justify-center z-50';
-                          lightbox.innerHTML = `
-                            <div class="relative max-w-full max-h-full flex items-center justify-center">
-                              <img src="${image}" alt="Photo ${imageIndex + 1} - Jour ${step.day_number}" class="max-w-full max-h-full object-contain">
-                              <button class="absolute top-4 right-4 text-white text-3xl hover:text-gray-300 bg-black bg-opacity-50 rounded-full w-10 h-10 flex items-center justify-center">&times;</button>
-                              ${imageIndex > 0 ? `<button class="absolute left-4 top-1/2 transform -translate-y-1/2 text-white text-2xl hover:text-gray-300 bg-black bg-opacity-50 rounded-full w-12 h-12 flex items-center justify-center">‹</button>` : ''}
-                              ${imageIndex < step.images.length - 1 ? `<button class="absolute right-4 top-1/2 transform -translate-y-1/2 text-white text-2xl hover:text-gray-300 bg-black bg-opacity-50 rounded-full w-12 h-12 flex items-center justify-center">›</button>` : ''}
-                              <div class="absolute bottom-4 left-1/2 transform -translate-x-1/2 text-white text-sm bg-black bg-opacity-50 px-3 py-1 rounded">${imageIndex + 1} / ${step.images.length}</div>
-                            </div>
-                          `;
-                          lightbox.onclick = (e) => {
-                            if (e.target === lightbox || (e.target as Element).textContent === '×') {
-                              document.body.removeChild(lightbox);
-                            }
-                          };
-                          document.body.appendChild(lightbox);
-                        }}
+                  <div className="relative">
+                    <Carousel
+                      opts={{ loop: true, align: "start", containScroll: "trimSnaps" }}
+                      className="w-full"
+                    >
+                      <CarouselContent
+                        viewportClassName="h-[50vh] md:h-[60vh] lg:h-[70vh] w-full bg-transparent"
+                        className="h-full"
                       >
-                        <img 
-                          src={image} 
-                          alt={`Photo ${imageIndex + 1} - Jour ${step.day_number}`}
-                          className="w-full h-48 object-cover"
-                        />
-                        <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-20 transition-all duration-300 flex items-center justify-center">
-                          <div className="text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-black bg-opacity-50 px-3 py-1 rounded text-sm">
-                            Cliquer pour agrandir
-                          </div>
-                        </div>
-                      </div>
-                    ))}
+                        {step.images.map((image, imageIndex) => (
+                          <CarouselItem key={imageIndex} className="basis-full min-w-0 shrink-0 grow-0">
+                            <div className="flex items-center justify-center h-full w-full bg-transparent">
+                              <img
+                                src={image}
+                                alt={`Photo ${imageIndex + 1} - Jour ${step.day_number}`}
+                                className="block w-full h-full object-cover object-center select-none"
+                                draggable="false"
+                                loading="lazy"
+                              />
+                            </div>
+                          </CarouselItem>
+                        ))}
+                      </CarouselContent>
+                      <CarouselPrevious aria-label="Photo précédente" />
+                      <CarouselNext aria-label="Photo suivante" />
+                    </Carousel>
                   </div>
                 </div>
               )}

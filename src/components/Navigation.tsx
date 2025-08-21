@@ -26,7 +26,7 @@ const Navigation = () => {
           {/* Logo */}
           <Link to="/" className="flex items-center space-x-2">
             <img 
-              src="/lovable-uploads/15ff9a6d-5fc2-41cc-82c6-046da107e6ef.png" 
+              src="/favicon.ico?v=3" 
               alt="Magib Sall" 
               className="w-10 h-10 rounded-full border-2 border-primary"
             />
