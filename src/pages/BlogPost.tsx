@@ -206,46 +206,136 @@ const BlogPostPage = () => {
       </div>
 
       {/* Contenu de l'article */}
-      <div className="container mx-auto px-4 py-12">
-        <div className="max-w-4xl mx-auto">
+      <div className="bg-white">
+        <div className="max-w-4xl mx-auto px-6 py-16">
           
-          {/* Extrait */}
-          <div className="mb-12">
-            <p className="text-xl text-muted-foreground leading-relaxed italic border-l-4 border-primary pl-6">
-              {post.excerpt}
-            </p>
-          </div>
+          {/* Fil d'Ariane */}
+          <nav className="mb-8">
+            <div className="flex items-center text-sm text-gray-500 space-x-2">
+              <Link to="/" className="hover:text-primary transition-colors">Accueil</Link>
+              <span>/</span>
+              <Link to="/blog" className="hover:text-primary transition-colors">Blog</Link>
+              <span>/</span>
+              <span className="text-gray-700">{post.title}</span>
+            </div>
+          </nav>
 
-          {/* Bouton de partage */}
-          <div className="flex justify-center mb-12">
-            <Button 
-              variant="outline" 
-              className="flex items-center gap-2"
-              onClick={() => navigator.share?.({ title: post.title, url: window.location.href })}
-            >
-              <Share2 className="w-4 h-4" />
-              Partager cet article
-            </Button>
-          </div>
+          {/* En-tête de l'article */}
+          <header className="mb-12 text-center">
+            <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6 leading-tight">
+              {post.title}
+            </h1>
+            
+            <div className="flex items-center justify-center space-x-6 text-sm text-gray-600 mb-8">
+              <time className="flex items-center gap-2">
+                <Calendar className="w-4 h-4" />
+                {formatDate(post.created_at)}
+              </time>
+              <span className="flex items-center gap-2">
+                <Clock className="w-4 h-4" />
+                {post.reading_time} min de lecture
+              </span>
+              {post.location && (
+                <span className="flex items-center gap-2">
+                  <MapPin className="w-4 h-4" />
+                  {post.location}
+                </span>
+              )}
+            </div>
+
+            {/* Image principale */}
+            {post.image_url && (
+              <div className="mb-12">
+                <img 
+                  src={post.image_url} 
+                  alt={post.title}
+                  className="w-full max-w-3xl mx-auto rounded-lg shadow-lg cursor-pointer hover:shadow-xl transition-shadow duration-300"
+                  onClick={() => {
+                    // Ouvrir l'image en lightbox
+                    const lightbox = document.createElement('div');
+                    lightbox.className = 'fixed inset-0 bg-black bg-opacity-90 flex items-center justify-center z-50 cursor-pointer';
+                    lightbox.innerHTML = `
+                      <img src="${post.image_url}" alt="${post.title}" class="max-w-full max-h-full object-contain">
+                      <button class="absolute top-4 right-4 text-white text-2xl hover:text-gray-300">&times;</button>
+                    `;
+                    lightbox.onclick = () => document.body.removeChild(lightbox);
+                    document.body.appendChild(lightbox);
+                  }}
+                />
+              </div>
+            )}
+          </header>
+
+          {/* Extrait/Introduction */}
+          {post.excerpt && (
+            <div className="mb-12">
+              <div className="text-xl text-gray-700 leading-relaxed bg-gray-50 p-8 rounded-lg border-l-4 border-primary">
+                {post.excerpt}
+              </div>
+            </div>
+          )}
 
           {/* Contenu principal */}
-          <div className="prose prose-lg max-w-none">
+          <article className="prose prose-lg prose-gray max-w-none mb-16">
             <div 
-              className="text-foreground leading-relaxed space-y-6"
+              className="text-gray-800 leading-relaxed space-y-8 [&>p]:mb-6 [&>h2]:text-2xl [&>h2]:font-bold [&>h2]:text-gray-900 [&>h2]:mt-12 [&>h2]:mb-6 [&>h3]:text-xl [&>h3]:font-semibold [&>h3]:text-gray-800 [&>h3]:mt-8 [&>h3]:mb-4"
               dangerouslySetInnerHTML={{ 
                 __html: `<p>${formatContent(post.content)}</p>` 
               }}
             />
-          </div>
+          </article>
 
           {/* Galerie d'images */}
           {post.gallery_images && post.gallery_images.length > 0 && (
-            <div className="mt-16">
-              <h3 className="text-2xl font-bold text-foreground mb-8 text-center">
-                Galerie du voyage
-              </h3>
-              <ImageGallery images={post.gallery_images} />
-            </div>
+            <section className="mb-16">
+              <h2 className="text-3xl font-bold text-gray-900 mb-8 text-center">
+                Galerie Photos
+              </h2>
+              
+              {/* Grille d'images responsive */}
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {post.gallery_images.map((image, index) => (
+                  <div 
+                    key={index}
+                    className="relative group cursor-pointer overflow-hidden rounded-lg shadow-md hover:shadow-xl transition-all duration-300 transform hover:scale-105"
+                    onClick={() => {
+                      // Ouvrir l'image en lightbox avec navigation
+                      const lightbox = document.createElement('div');
+                      lightbox.className = 'fixed inset-0 bg-black bg-opacity-95 flex items-center justify-center z-50';
+                      lightbox.innerHTML = `
+                        <div class="relative max-w-full max-h-full flex items-center justify-center">
+                          <img src="${image}" alt="Photo ${index + 1}" class="max-w-full max-h-full object-contain">
+                          <button class="absolute top-4 right-4 text-white text-3xl hover:text-gray-300 bg-black bg-opacity-50 rounded-full w-10 h-10 flex items-center justify-center">&times;</button>
+                          ${index > 0 ? `<button class="absolute left-4 top-1/2 transform -translate-y-1/2 text-white text-2xl hover:text-gray-300 bg-black bg-opacity-50 rounded-full w-12 h-12 flex items-center justify-center">‹</button>` : ''}
+                          ${index < post.gallery_images!.length - 1 ? `<button class="absolute right-4 top-1/2 transform -translate-y-1/2 text-white text-2xl hover:text-gray-300 bg-black bg-opacity-50 rounded-full w-12 h-12 flex items-center justify-center">›</button>` : ''}
+                          <div class="absolute bottom-4 left-1/2 transform -translate-x-1/2 text-white text-sm bg-black bg-opacity-50 px-3 py-1 rounded">${index + 1} / ${post.gallery_images!.length}</div>
+                        </div>
+                      `;
+                      
+                      // Gérer la navigation et fermeture
+                      lightbox.onclick = (e) => {
+                        if (e.target === lightbox || (e.target as Element).textContent === '×') {
+                          document.body.removeChild(lightbox);
+                        }
+                      };
+                      
+                      document.body.appendChild(lightbox);
+                    }}
+                  >
+                    <img 
+                      src={image} 
+                      alt={`Photo ${index + 1}`}
+                      className="w-full h-64 object-cover"
+                    />
+                    <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-20 transition-all duration-300 flex items-center justify-center">
+                      <div className="text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-black bg-opacity-50 px-3 py-1 rounded text-sm">
+                        Cliquer pour agrandir
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </section>
           )}
 
           {/* Vidéos YouTube */}
