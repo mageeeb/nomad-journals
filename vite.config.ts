@@ -8,6 +8,8 @@ export default defineConfig(({ mode }) => ({
   server: {
     host: "::",
     port: 8080,
+    // Configuration pour le développement local
+    historyApiFallback: true,
   },
   plugins: [
     react(),
