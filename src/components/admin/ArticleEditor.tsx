@@ -343,6 +343,7 @@ const ArticleEditor: React.FC<ArticleEditorProps> = ({ articleId, onBack, onSave
                   multiple
                   folder="gallery"
                   className="border rounded-lg p-4"
+                  existingImages={form.watch('gallery_images') || []}
                 />
               </div>
 

@@ -12,6 +12,7 @@ interface ImageUploadProps {
   folder?: string;
   preview?: boolean;
   className?: string;
+  existingImages?: string[];
 }
 
 const ImageUpload: React.FC<ImageUploadProps> = ({
@@ -20,10 +21,11 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
   multiple = false,
   folder = 'general',
   preview = true,
-  className = ''
+  className = '',
+  existingImages = []
 }) => {
   const [uploading, setUploading] = useState(false);
-  const [uploadedImages, setUploadedImages] = useState<string[]>([]);
+  const [uploadedImages, setUploadedImages] = useState<string[]>(existingImages);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
 
