@@ -79,12 +79,12 @@ const BlogPage = () => {
       <NavigationNew />
       
       {/* Hero Section */}
-      <section className="relative py-20 bg-gradient-to-r from-primary/10 to-secondary/10">
+      <section className="relative py-12 md:py-20 bg-gradient-to-r from-primary/10 to-secondary/10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h1 className="text-4xl md:text-6xl font-bold text-foreground mb-6 font-playfair">
+          <h1 className="text-3xl md:text-4xl lg:text-6xl font-bold text-foreground mb-4 md:mb-6 font-playfair">
             Mes Aventures
           </h1>
-          <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
+          <p className="text-lg md:text-xl text-muted-foreground max-w-3xl mx-auto px-4">
             Découvrez mes récits de voyage, conseils pratiques et destinations coup de cœur 
             à travers le monde. Laissez-vous inspirer pour votre prochaine aventure !
           </p>
@@ -92,11 +92,11 @@ const BlogPage = () => {
       </section>
 
       {/* Blog Posts */}
-      <section className="py-16">
+      <section className="py-8 md:py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           {posts.length === 0 ? (
             <div className="text-center py-12">
-              <h2 className="text-2xl font-semibold text-muted-foreground mb-4">
+              <h2 className="text-xl md:text-2xl font-semibold text-muted-foreground mb-4">
                 Aucun article publié pour le moment
               </h2>
               <p className="text-muted-foreground">
@@ -104,7 +104,7 @@ const BlogPage = () => {
               </p>
             </div>
           ) : (
-            <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
+            <div className="grid gap-6 md:gap-8 sm:grid-cols-2 lg:grid-cols-3">
               {posts.map((post) => (
                 <Card key={post.id} className="overflow-hidden hover:shadow-lg transition-shadow duration-300">
                   {post.image_url && (
@@ -113,11 +113,12 @@ const BlogPage = () => {
                         src={post.image_url}
                         alt={post.title}
                         className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
+                        loading="lazy"
                       />
                     </div>
                   )}
-                  <CardHeader className="space-y-2">
-                    <div className="flex items-center justify-between text-sm text-muted-foreground">
+                  <CardHeader className="space-y-2 p-4 md:p-6">
+                    <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 text-sm text-muted-foreground">
                       <div className="flex items-center space-x-2">
                         <Calendar className="w-4 h-4" />
                         <span>{formatDate(post.created_at)}</span>
@@ -125,19 +126,19 @@ const BlogPage = () => {
                       {post.location && (
                         <div className="flex items-center space-x-1">
                           <MapPin className="w-4 h-4" />
-                          <span>{post.location}{post.country && `, ${post.country}`}</span>
+                          <span className="truncate">{post.location}{post.country && `, ${post.country}`}</span>
                         </div>
                       )}
                     </div>
-                    <CardTitle className="text-xl hover:text-primary transition-colors font-playfair">
+                    <CardTitle className="text-lg md:text-xl hover:text-primary transition-colors font-playfair line-clamp-2">
                       {post.title}
                     </CardTitle>
                   </CardHeader>
-                  <CardContent className="space-y-4">
-                    <p className="text-muted-foreground leading-relaxed">
+                  <CardContent className="space-y-4 p-4 md:p-6 pt-0 md:pt-0">
+                    <p className="text-muted-foreground leading-relaxed line-clamp-3">
                       {getExcerpt(post)}
                     </p>
-                    <div className="flex items-center justify-between">
+                    <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
                       <div className="flex items-center space-x-3">
                         <Badge variant="secondary">Voyage</Badge>
                         {post.reading_time && (
@@ -148,7 +149,7 @@ const BlogPage = () => {
                         )}
                       </div>
                       <Link to={`/blog/${post.slug}`}>
-                        <Button variant="ghost" size="sm" className="group">
+                        <Button variant="ghost" size="sm" className="group w-full sm:w-auto">
                           Lire la suite
                           <ArrowRight className="w-4 h-4 ml-1 group-hover:translate-x-1 transition-transform" />
                         </Button>

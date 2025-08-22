@@ -194,31 +194,31 @@ const BlogPostItinerary: React.FC = () => {
       </div>
 
       {/* Hero Section */}
-      <div className="max-w-6xl mx-auto px-4 pb-8">
-        <div className="text-center mb-8">
-          <h1 className="text-4xl md:text-5xl font-bold mb-4">{post.title}</h1>
-          <div className="flex justify-center items-center gap-4 text-muted-foreground mb-6">
+      <div className="max-w-6xl mx-auto px-4 pb-6 md:pb-8">
+        <div className="text-center mb-6 md:mb-8">
+          <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-3 md:mb-4 font-playfair">{post.title}</h1>
+          <div className="flex flex-wrap justify-center items-center gap-2 md:gap-4 text-muted-foreground mb-4 md:mb-6 text-sm md:text-base">
             <span className="flex items-center gap-1">
-              <Calendar className="w-4 h-4" />
+              <Calendar className="w-3 h-3 md:w-4 md:h-4" />
               {formatDate(post.created_at)}
             </span>
             <span className="flex items-center gap-1">
-              <Clock className="w-4 h-4" />
+              <Clock className="w-3 h-3 md:w-4 md:h-4" />
               {post.reading_time} min de lecture
             </span>
           </div>
         </div>
 
         {post.image_url && (
-          <div className="relative mb-8 rounded-2xl overflow-hidden shadow-2xl">
+          <div className="relative mb-6 md:mb-8 rounded-2xl overflow-hidden shadow-2xl">
             <img 
               src={post.image_url} 
               alt={post.title}
-              className="w-full h-[60vh] object-cover"
+              className="w-full h-[40vh] md:h-[60vh] object-cover"
             />
-            <div className="absolute bottom-4 right-4">
-              <Button onClick={shareArticle} variant="secondary" size="sm">
-                <Share2 className="w-4 h-4 mr-2" />
+            <div className="absolute bottom-2 right-2 md:bottom-4 md:right-4">
+              <Button onClick={shareArticle} variant="secondary" size="sm" className="text-xs md:text-sm">
+                <Share2 className="w-3 h-3 md:w-4 md:h-4 mr-1 md:mr-2" />
                 Partager
               </Button>
             </div>
@@ -226,28 +226,28 @@ const BlogPostItinerary: React.FC = () => {
         )}
 
         {/* Introduction */}
-        <div className="prose prose-lg mx-auto mb-12">
-          <p className="lead text-xl text-muted-foreground">
+        <div className="prose prose-lg mx-auto mb-8 md:mb-12 px-2 md:px-0">
+          <p className="lead text-lg md:text-xl text-muted-foreground">
             {post.excerpt}
           </p>
           <div 
-            className="mt-6"
+            className="mt-4 md:mt-6 text-sm md:text-base"
             dangerouslySetInnerHTML={{ __html: `<p>${formatContent(post.content)}</p>` }}
           />
         </div>
 
         {/* Table des matières */}
         {steps.length > 0 && (
-          <Card className="mb-12">
-            <CardHeader>
-              <CardTitle className="text-2xl">Itinéraire détaillé</CardTitle>
+          <Card className="mb-8 md:mb-12">
+            <CardHeader className="p-4 md:p-6">
+              <CardTitle className="text-xl md:text-2xl">Itinéraire détaillé</CardTitle>
             </CardHeader>
-            <CardContent>
-              <div className="grid md:grid-cols-2 gap-4">
+            <CardContent className="p-4 md:p-6 pt-0">
+              <div className="grid gap-3 md:grid-cols-2 md:gap-4">
                 {steps.map((step) => (
                   <div key={step.id} className="flex items-center gap-2">
-                    <Badge variant="outline">Jour {step.day_number}</Badge>
-                    <span className="text-sm">{step.title}</span>
+                    <Badge variant="outline" className="text-xs md:text-sm">Jour {step.day_number}</Badge>
+                    <span className="text-xs md:text-sm truncate flex-1">{step.title}</span>
                   </div>
                 ))}
               </div>
@@ -257,33 +257,33 @@ const BlogPostItinerary: React.FC = () => {
       </div>
 
       {/* Étapes détaillées */}
-      <div className="max-w-4xl mx-auto px-4 space-y-12 mb-12">
+      <div className="max-w-4xl mx-auto px-4 space-y-8 md:space-y-12 mb-8 md:mb-12">
         {steps.map((step, index) => (
           <Card key={step.id} className="border-l-4 border-l-primary">
-            <CardHeader>
-              <div className="flex items-center justify-between">
+            <CardHeader className="p-4 md:p-6">
+              <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
                 <div>
-                  <CardTitle className="text-2xl mb-2">
+                  <CardTitle className="text-lg md:text-2xl mb-1 md:mb-2 leading-tight">
                     Jour {step.day_number}: {step.title}
                   </CardTitle>
                   {step.location && (
-                    <div className="flex items-center gap-1 text-muted-foreground">
-                      <MapPin className="w-4 h-4" />
+                    <div className="flex items-center gap-1 text-muted-foreground text-sm">
+                      <MapPin className="w-3 h-3 md:w-4 md:h-4" />
                       <span>{step.location}</span>
                     </div>
                   )}
                 </div>
                 {step.budget && (
-                  <Badge variant="secondary" className="flex items-center gap-1">
+                  <Badge variant="secondary" className="flex items-center gap-1 text-xs md:text-sm self-start md:self-auto">
                     <DollarSign className="w-3 h-3" />
                     {step.budget}€
                   </Badge>
                 )}
               </div>
             </CardHeader>
-            <CardContent className="space-y-6">
+            <CardContent className="space-y-4 md:space-y-6 p-4 md:p-6 pt-0">
               {step.description && (
-                <p className="text-muted-foreground">{step.description}</p>
+                <p className="text-muted-foreground text-sm md:text-base">{step.description}</p>
               )}
 
               {/* Activités */}
