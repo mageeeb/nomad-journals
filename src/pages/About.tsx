@@ -5,6 +5,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { MapPin, Camera, Globe, Heart } from 'lucide-react';
 
 const About = () => {
+  // About page component
   const stats = [
     { icon: Globe, label: 'Pays visités', value: '25+' },
     { icon: MapPin, label: 'Villes explorées', value: '150+' },
@@ -31,7 +32,7 @@ const About = () => {
             </div>
             <div className="flex justify-center lg:justify-end">
               <img 
-                src="/favicon.ico?v=3" 
+                src="/me.png"
                 alt="Magib Sall" 
                 className="w-80 h-80 rounded-full border-4 border-primary shadow-2xl"
               />

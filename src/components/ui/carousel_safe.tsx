@@ -1,13 +1,12 @@
 import * as React from "react"
-import useEmblaCarousel, {
-  type UseEmblaCarouselType,
-} from "embla-carousel-react"
+import useEmblaCarousel, { type UseEmblaCarouselType } from "embla-carousel-react"
 import { ArrowLeft, ArrowRight } from "lucide-react"
 
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 
 type CarouselApi = UseEmblaCarouselType[1]
+
 type UseCarouselParameters = Parameters<typeof useEmblaCarousel>
 type CarouselOptions = UseCarouselParameters[0]
 type CarouselPlugin = UseCarouselParameters[1]
@@ -32,11 +31,9 @@ const CarouselContext = React.createContext<CarouselContextProps | null>(null)
 
 function useCarousel() {
   const context = React.useContext(CarouselContext)
-
   if (!context) {
     throw new Error("useCarousel must be used within a <Carousel />")
   }
-
   return context
 }
 
@@ -68,22 +65,17 @@ const Carousel = React.forwardRef<
     const [canScrollNext, setCanScrollNext] = React.useState(false)
 
     const onSelect = React.useCallback((api: CarouselApi) => {
-      if (!api) {
-        return
-      }
-
+      if (!api) return
       try {
         const snaps = api.scrollSnapList()
         const selected = api.selectedScrollSnap()
         const canPrev = api.canScrollPrev()
         const canNext = api.canScrollNext()
-        // Runtime debug instrumentation
         // eslint-disable-next-line no-console
         console.log("[Embla] select/reInit", { canPrev, canNext, snaps, selected })
-      } catch (e) {
+      } catch {
         // ignore
       }
-
       setCanScrollPrev(api.canScrollPrev())
       setCanScrollNext(api.canScrollNext())
     }, [])
@@ -110,18 +102,12 @@ const Carousel = React.forwardRef<
     )
 
     React.useEffect(() => {
-      if (!api || !setApi) {
-        return
-      }
-
+      if (!api || !setApi) return
       setApi(api)
     }, [api, setApi])
 
     React.useEffect(() => {
-      if (!api) {
-        return
-      }
-
+      if (!api) return
       try {
         const snaps = api.scrollSnapList()
         const selected = api.selectedScrollSnap()
@@ -129,14 +115,12 @@ const Carousel = React.forwardRef<
         const canNext = api.canScrollNext()
         // eslint-disable-next-line no-console
         console.log("[Embla] init", { canPrev, canNext, snaps, selected })
-      } catch (e) {
+      } catch {
         // ignore
       }
-
       onSelect(api)
       api.on("reInit", onSelect)
       api.on("select", onSelect)
-
       return () => {
         api?.off("select", onSelect)
         api?.off("reInit", onSelect)
@@ -145,7 +129,6 @@ const Carousel = React.forwardRef<
 
     // Force reInit when images inside the carousel load (incl. lazy-loaded)
     React.useEffect(() => {
-      // Only run when we have an Embla API
       if (!api) return
 
       // Try to detect the viewport element from the ref (only if it's an Element)
@@ -186,14 +169,12 @@ const Carousel = React.forwardRef<
 
       return () => {
         if (typeof window !== 'undefined' && timeout) window.clearTimeout(timeout)
-        // Listeners were attached with { once: true }, no manual removal needed
       }
     }, [api, carouselRef, children])
 
     // Reinitialize Embla on resize/viewport changes
     React.useEffect(() => {
       if (!api) return
-
       const maybeViewportUnknown = carouselRef as unknown as unknown
       let viewportEl: Element | null = null
       if (maybeViewportUnknown && typeof maybeViewportUnknown === 'object') {
@@ -210,7 +191,7 @@ const Carousel = React.forwardRef<
       const ro = new ResizeObserver(() => {
         api.reInit()
       })
-      ro.observe(viewportEl)
+      ro.observe(viewportEl as Element)
 
       const onWinResize = () => api.reInit()
       window.addEventListener('resize', onWinResize)
