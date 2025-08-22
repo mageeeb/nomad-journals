@@ -145,9 +145,9 @@ const Carousel = React.forwardRef<
 
     // Force reInit when images inside the carousel load (incl. lazy-loaded)
     React.useEffect(() => {
-      if (!api || !carouselRef?.current) return
+      if (!api || !carouselRef) return
 
-      const viewport = carouselRef.current as HTMLDivElement
+      const viewport = carouselRef as unknown as HTMLDivElement
       const images = Array.from(viewport.querySelectorAll('img')) as HTMLImageElement[]
       if (images.length === 0) return
 
@@ -176,9 +176,9 @@ const Carousel = React.forwardRef<
 
     // Reinitialize Embla on resize/viewport changes
     React.useEffect(() => {
-      if (!api || !carouselRef?.current) return
+      if (!api || !carouselRef) return
 
-      const viewport = carouselRef.current as HTMLDivElement
+      const viewport = carouselRef as unknown as HTMLDivElement
       const ro = new ResizeObserver(() => {
         api.reInit()
       })
