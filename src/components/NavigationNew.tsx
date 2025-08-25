@@ -13,6 +13,7 @@ const NavigationNew = () => {
   const navItems = [
     { name: 'Accueil', path: '/' },
     { name: 'Blog', path: '/blog' },
+    { name: 'Album Photo', path: '/album' },
     { name: 'À propos', path: '/about' },
     { name: 'Contact', path: '/contact' },
   ];
